@@ -10,7 +10,7 @@ public:
 	{
 		cout<<"AutoPtr()"<<endl;
 		_p = p;
-		_owner = true;
+	//	_owner = true;
 	}
 
 	AutoPtr(AutoPtr& ap)
