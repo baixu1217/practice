@@ -1,6 +1,6 @@
 #include<iostream>
 using namespace std;
-
+//auto_ptrÄ£ÄâÊµÏÖ
 template<typename T>
 class AutoPtr
 {
