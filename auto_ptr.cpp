@@ -10,13 +10,16 @@ public:
 	{
 		cout<<"AutoPtr()"<<endl;
 		_p = p;
+		_owner = true;
 	}
 
 	AutoPtr(AutoPtr& ap)
 		:_p(ap._p)
 	{
 		cout<<"AutoPtr(AutoPtr& ap)"<<endl;
+		ap._owner = false;
 		ap._p = NULL;
+		_owner = true;
 	}
 	AutoPtr<T>& operator=(AutoPtr& ap)
 	{
@@ -25,7 +28,9 @@ public:
 		{
 			delete _p;
 			_a = ap._p;
+			ap._owner = false;
 			ap._p = NULL;
+			_owner = true;
 		}
 	}
 	~AutoPtr()
@@ -35,6 +40,7 @@ public:
 		{
 			delete _p;
 			_p = NULL;
+			_owner = false;
 		}
 	}
 public:
@@ -48,6 +54,7 @@ public:
 	}
 private:
 	T *_p;
+	bool _owner;
 };
 
 
