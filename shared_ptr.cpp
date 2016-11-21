@@ -7,13 +7,11 @@ class Node
 {
 public:
 	Node(const T& value)
-		:_pNext(NULL)
-		,_pPre(NULL)
-		,_value(value)
+		:_value(value)
 	{}
 	T _value;	
-	shared_ptr<Node<T>> _pNext;
-	shared_ptr<Node<T>> _pPre;
+	weak_ptr<Node<T>> _pNext;
+	weak_ptr<Node<T>> _pPre;
 };
 
 void FunTest()
