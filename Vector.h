@@ -30,14 +30,22 @@ public:
 			size_t _Capacity = v._EndOfStorge - v._start;
 			Iterator tmp = new T[v.Size()];
 			Copy<T>(tmp,v._start,v.Size());
-			delete _start;
+			delete[] _start;
 			_start = tmp;
 			_finish = _start + v.Size();
 			_EndOfStorge = _start + _Capacity;
 		}
 		return *this;
 	}
+	~Vector()
+	{
+		if(_start)
+		{
+			delete[] _start;
+		}
 
+		_start = _finish = _EndOfStorge = NULL;
+	}
 public:
 	Iterator Begin()
 	{
@@ -71,7 +79,7 @@ public:
 
 	void CheckCapacity()
 	{
-		if(_start == _finish)
+		if(_finish == _EndOfStorge)
 		{
 			size_t _size = Size();
 			size_t NewCapacity = Capacity()*2+3;
@@ -79,7 +87,7 @@ public:
 			if(_start)
 			{
 				Copy<T>(tmp,_start,Size());
-				delete _start;
+				delete[] _start;
 			}
 			_start = tmp;
 			_finish = _start+_size;
@@ -140,7 +148,7 @@ public:
 		{
 			Iterator tmp = new T[_size];
 			Copy<T>(tmp,_start,size);
-			
+			delete[] _start;
 			_start = tmp;
 			for(size_t i = size; i < _size; ++i)
 			{
@@ -221,8 +229,7 @@ void rPrintList(Vector<int>& l)
 	while(it != l.rEnd())
 	{
 		--it;
-		cout<<*it<<" ";
-		
+		cout<<*it<<" ";	
 	}
 	cout<<endl;
 }
