@@ -12,6 +12,7 @@ int Sum(int val,...)
 	{
 		sum += va_arg(va,int);
 	}
+	va_end(va);
 	return sum;
 }
 
