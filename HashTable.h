@@ -104,16 +104,32 @@ public:
 	{
 		_CheckCapacity();
 		size_t index = HashFunc(key);
-		while(_tables[index]._status ==  EXIST )
+		//线性探测
+		/*while(_tables[index]._status ==  EXIST )
 		{
 			if(_tables[index]._key == key)
 				return make_pair((Node*)NULL,false);
 			++index;
+
 			if(index == _tables.size())
 			{
 				index = 0;
 			}
 		}
+		*/
+		//二次探测
+		size_t i = 0;
+		size_t first = index;
+		while(_tables[index]._status ==  EXIST )
+		{
+			if(_tables[index]._key == key)
+				return make_pair((Node*)NULL,false);
+			++i;
+			index = first + i*i;
+			index %= _tables.size();
+		}
+		
+
 		++_size;
 		_tables[index]._key = key;
 		_tables[index]._value = value;
@@ -182,14 +198,14 @@ private:
 void HashTest()
 {
 	HashTable<int,int> ht(10);
-	ht.Insert(58,0);
-	ht.Insert(49,0);
-	ht.Insert(48,0);
-	ht.Insert(17,0);
+	ht.Insert(52,0);
+	ht.Insert(18,0);
+	ht.Insert(36,0);
+	ht.Insert(53,0);
 	ht.Insert(9,0);
-	if(ht.Find(48,0))
-		cout<<ht.Find(48,0)->_key<<endl;
-	cout<<ht.Remove(48,0)<<endl;
+	if(ht.Find(49,0))
+	cout<<ht.Remove(58,0)<<endl;
+		cout<<ht.Find(9,0)->_key<<endl;
 
 	HashTable<string,string> ht1(10);
 	ht1.Insert("sort","排序");
