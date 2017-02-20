@@ -2,10 +2,39 @@
 #include<iostream>
 using namespace std;
 #include<vector>
+#include<string>
 
 namespace HashBucket
 {
-	template<class K,class V>
+	template<class K>
+	struct __HashFunc
+	{
+		size_t operator()(const K& key)
+		{
+			return key;
+		}
+	};
+
+	template<>
+	struct __HashFunc<string>
+	{
+		size_t BKDRHash(const char* str)
+		{
+			register size_t hash = 0;
+			while(*str)
+			{
+				hash = hash*131 + *str;
+				++str;
+			}
+			return hash;
+		}
+		size_t operator()(const string& str)
+		{
+			return BKDRHash(str.c_str());
+		}
+	};
+
+	template<class K,class V,class _HashFunc>
 	class HashTable;
 
 	template<class K,class V>
@@ -25,9 +54,9 @@ namespace HashBucket
 		typedef HashNode<K,V> Node;
 		typedef HashIterator<K,V,Ref,Ptr> Self;
 		Node* _node;
-		HashTable<K,V>* _ht;
+		HashTable<K,V,__HashFunc<K>>* _ht;
 
-		HashIterator(Node* node,HashTable<K,V>* ht)
+		HashIterator(Node* node,HashTable<K,V,__HashFunc<K>>* ht)
 			:_node(node)
 			,_ht(ht)
 		{}
@@ -74,36 +103,7 @@ namespace HashBucket
 		}
 	};
 
-
-	template<class K>
-	struct __HashFunc
-	{
-		size_t operator()(const K& key)
-		{
-			return key;
-		}
-	};
-
-	template<>
-	struct __HashFunc<string>
-	{
-		size_t BKDRHash(const char* str)
-		{
-			register size_t hash = 0;
-			while(*str)
-			{
-				hash = hash*131 + *str;
-				++str;
-			}
-			return hash;
-		}
-		size_t operator()(const string& str)
-		{
-			return BKDRHash(str.c_str());
-		}
-	};
-
-	template<class K,class V>
+	template<class K,class V,class _HashFunc = __HashFunc<K>>
 	class HashTable
 	{
 		typedef HashNode<K,V> Node;
@@ -177,12 +177,12 @@ namespace HashBucket
 
 		size_t HashFunc(const K& key)
 		{
-			__HashFunc<K> hf;
+			_HashFunc hf;
 			size_t va = hf(key);
 			return va % _tables.size();
 		}
 
-		void Swap(HashTable<K,V>& ht)
+		void Swap(HashTable<K,V,_HashFunc>& ht)
 		{
 			_tables.swap(ht._tables);
 			swap(_size,ht._size);
@@ -316,6 +316,21 @@ namespace HashBucket
 		{
 			cout<<(*it).first<<":"<<(*it).second<<endl;
 			++it;
+		}
+
+		HashTable<string,string> ht1;
+		ht1.Insert(make_pair<string,string>("sort","≈≈–Ú"));
+		ht1.Insert(make_pair<string,string>("left","◊Û±ﬂ"));
+		ht1.Insert(make_pair<string,string>("right","”“±ﬂ"));
+		ht1.Insert(make_pair<string,string>("up","…œ±ﬂ"));
+
+		cout<<ht1.Erase("up")<<endl;
+		cout<<ht1.Find("sort")->_kv.second<<endl;
+		HashTable<string,string>::Iterator it1 = ht1.Begin();
+		while(it1 != ht1.End())
+		{
+			cout<<(*it1).first<<":"<<(*it1).second<<endl;
+			++it1;
 		}
 	}
 };
