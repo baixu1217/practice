@@ -48,3 +48,27 @@ void* my_memset(void* dst,int ch,size_t length)
 	return dst;
 }
 
+char* Strncpy(char* dest,char* src,size_t n)
+{
+	assert(src!=NULL);
+	char* pdest = dest;
+	while(n && (*pdest++ = *src++) != '\0')
+	{
+		n--;
+	}
+	if(n > 0)
+	{
+		while(--n)
+			*pdest++ = '\0';
+	}
+	return dest;
+}
+
+void TestStrncpy()
+{
+	char* str =  "hello world";
+	char dest[20];
+	cout<<Strncpy(dest,str,5)<<endl;
+}
+
+
