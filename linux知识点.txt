@@ -1,0 +1,85 @@
+linux知识点：
+1、make：Makefile中的变量其实就是C/C++中的宏。如果你要让通配符在变量中展开，也就是让objects的值是所有[.o]的文件名的集合，
+那么，你可以这样：
+   objects := $(wildcard *.o)
+这种用法由关键字“wildcard”指出，关于Makefile的关键字，我们将在后面讨论。
+2、伪目标也可以成为依赖
+   .PHONY: cleanall cleanobj cleandiff
+ 
+   cleanall : cleanobj cleandiff
+           rm program
+ 
+   cleanobj :
+           rm *.o
+ 
+   cleandiff :
+           rm *.diff
+3、awk：#cat /etc/passwd |awk  -F ':'  '{print $1"\t"$7}'
+		#cat /etc/passwd |awk  -F ':'  'BEGIN {print "name,shell"}  {print $1","$7} END {print "blue,/bin/nosh"}'
+		#awk -F: '/root/' /etc/passwd   搜索有root关键字的所有行
+		#awk -F: '/^root/' /etc/passwd  搜索以root开头的所有行
+		# awk -F: '/root/{print $7}' /etc/passwd   显示对应的shell
+ARGC               命令行参数个数
+ARGV               命令行参数排列
+ENVIRON            支持队列中系统环境变量的使用
+FILENAME           awk浏览的文件名
+FNR                浏览文件的记录数
+FS                 设置输入域分隔符，等价于命令行 -F选项
+NF                 浏览记录的域的个数
+NR                 已读的记录数
+OFS                输出域分隔符
+ORS                输出记录分隔符
+RS                 控制记录分隔符
+使用awk找出有root关键字的文件名，行数，列数，参数个数：awk -F ':' '/root/{print "filename:" FILENAME ",linenum:" NR ",colnum:" NF ",argc:" ARGC "\t" $0}' /etc/passwd
+也可以使用printf：awk -F ':' '/root/{printf("filename:%10s,linrnum:%s,colnum:%s,argc:%s\n",FILENAME,NR,NF,ARGC)}' /etc/passwd
+统计账户人数：awk '{count++;print $0;} END{print "user count is ", count}' /etc/passwd
+统计开始count和结束count：awk 'BEGIN {count = 0;print "start count",count}  {count++;} END {print "end count",count}' /etc/passwd
+统计字节数：ls -l | awk 'BEGIN {size = 0;print "start size:",size} {size+=$5} END{print "end size:",size}'
+过滤4096字节的数：ls -l | awk 'BEGIN {size = 0;print "start size:",size}{if($5 != 4096)size+=$5} END{print "end size:",size/1024/1024 "M"}'
+遍历数：ls -l | awk 'BEGIN{count = 0;} {name[count]=$3;count++}END{for(i = 0; i < NR;i++)print i,name[i]}'
+4、sed:
+		a   ∶新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～
+        c   ∶取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！
+        d   ∶删除，因为是删除啊，所以 d 后面通常不接任何咚咚；
+        i   ∶插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；
+        p  ∶列印，亦即将某个选择的资料印出。通常 p 会与参数 sed -n 一起运作～
+        s  ∶取代，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配正规表示法！例如 1,20s/old/new/g 就是啦！
+查询有a关键字的行：sed -n '/a/p' aaa
+第一行追加hello：sed '1a hello' aaa
+				 sed '1a hello\nworld' aaa
+代替为bit:sed '1c bit' aaa
+将有a关键字的字符转换为lll：sed -n '/a/p' aaa | sed 's/a/lll/g'
+最后一行插入bye：sed -i '$a bye' aaa
+将hello替换为world：sed -i 's/hello/world/g' aaa
+5、grep
+grep [-acinv] [--color=auto] '搜寻字符串' filename
+选项与参数：
+-a ：将 binary 文件以 text 文件的方式搜寻数据
+-c ：计算找到 '搜寻字符串' 的次数
+-i ：忽略大小写的不同，所以大小写视为相同
+-n ：顺便输出行号
+-v ：反向选择，亦即显示出没有 '搜寻字符串' 内容的那一行！
+--color=auto ：可以将找到的关键词部分加上颜色的显示喔！
+匹配hello的那行，并标示其行：grep -n --color=auto 'hello' test.c
+匹配有root的行：grep root /etc/passwd
+
+grep ‘energywise’ *           #在当前目录搜索带'energywise'行的文件
+# grep -r ‘energywise’ *        #在当前目录及其子目录下搜索'energywise'行的文件
+# grep -l -r ‘energywise’ *     #在当前目录及其子目录下搜索'energywise'行的文件，但是不显示匹配的行，只显示匹配的文件
+匹配test或tasta：grep -n 't[ae]st' aaa
+有st，但是不希望前面有a：grep -n '[^a]st' aaa   结果：9:test
+只在行首出现：grep -n '^test' aaa
+
+^ 符号，在字符类符号(括号[])之内与之外是不同的！ 在 [] 内代表『反向选择』，在 [] 之外则代表定位在行首的意义！                
+行尾结束为小数点：grep -n '\.$' aaa
+
+找出空白行：grep -n '^$' aaa
+找出四个字节：grep -n 't..t' aaa
+后跟3个w：grep -n 'w\{3\}' aaa
+后跟1-3个w：grep -n 'w\{1,3\}' aaa
+
+6、chgrp,chown,chmod
+u,g,o,a(所有)
+
+
+
