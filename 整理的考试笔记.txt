@@ -1,0 +1,63 @@
+malloc/free和new/delete的区别和联系：
+1.malloc/free是函数，new/delete是操作符
+2.malloc开辟的是字节数的个数，new开辟的是类型
+3.malloc不需要初始化，new需要初始化
+4.malloc开辟空间后，需要判空，new不需要判空
+5.malloc/free不会调用构造，析构函数，new/delete需要调用构造析构函数
+6.new/delete的底层也调用malloc/free
+底层调用函数：
+new->operator new->malloc->构造函数
+new[]->operator new[]->operator new->malloc->构造函数
+delete->析构函数->operator delete->free
+delete->析构函数->operator delete[]->operator delete->free
+7.memcpy,memcpy,memset的实现：
+#pragma once
+extern "C"
+#include<assert.h>
+#include<stdio.h>
+void* my_memcpy(void* src,void* dst,size_t length)
+{
+	assert(src);
+	char* psrc = (char*)src;
+	char* pdst = (char*)dst;
+	while(length--)
+	{
+		*pdst++ = *psrc++;
+	}
+	return dst;
+}
+
+void* my_memmove(void* src,void* dst,size_t length)
+{
+	assert(src);
+	assert(dst);
+	char* psrc = (char*)src;
+	char* pdst = (char*)dst;
+	if(pdst>psrc && (psrc+length)>=pdst) //重叠的情况
+	{
+		//从后往前拷
+		while(length--)
+		{
+			*(pdst+length) = *(psrc+length);
+		}
+	}
+	else  //不重叠的情况
+	{
+		//从前往后拷
+		while(length--)
+			*pdst++ = *psrc++;
+	}
+	return dst;
+}
+
+void* my_memset(void* dst,int ch,size_t length)
+{
+	char* tmp = (char*)dst;
+	while(length--)
+	{
+		*tmp++ = ch;
+	}
+	return dst;
+}
+
+
