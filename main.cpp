@@ -1,42 +1,31 @@
-#define _CRT_SECURE_NO_WARNINGS 1
-#include"List.h"
-#include<vector>
+#include<iostream>
+using namespace std;
+#include"StackOrder.h"
+
 int main()
 {
-	List<int> l;
-	List<int> l1;
-	const List<int> l3;
-	l.PushBack(1);
-	l.PushBack(2);
-	l.PushBack(3);
-	l.PushBack(4);
-	l.PopBack();
-	PrintList(l);
-	l.PushFront(0);
-	PrintList(l);
-	l.PopFront();
-	l.Insert(l.End(),4);
-	l.Insert(l.Begin(),0);
-	PrintList(l);
-	cout<<"Front:"<<l.Front()<<endl;
-	cout<<"Back:"<<l.Back()<<endl;
-	cout<<"Empty:"<<l.Empty()<<endl;
-	l1.Swap(l);
-	PrintList(l1);
-	PrintList(l);
-	l.PushBack(10);
-	l.PushBack(11);
-	l.PushBack(12);
-	l1.Insert(l1.Begin(),l.Begin(),l.End());
-	PrintList(l1);
-	vector<int> v;
-	v.push_back(55);
-	v.push_back(66);
-	l1.Insert(l1.Begin(),v.begin(),v.end());
-	PrintList(l1);
-	char str[] = {'a','b'};
-	l1.Insert(l1.Begin(),str,str+2);
-	PrintList(l1);
+	int arr1[] = {1,2,3,4,5};   //入栈序列
+	int arr2[] = {4,5,3,1,2};   //出栈序列
+	int arr3[] = {5,4,3,2,1};
+	int arr4[] = {1,3,2,5,4};
 
-	return 0;
+	size_t size1 = sizeof(arr1)/sizeof(arr1[0]);
+	size_t size2 = sizeof(arr2)/sizeof(arr2[0]);
+	size_t size3 = sizeof(arr3)/sizeof(arr3[0]);
+	size_t size4 = sizeof(arr4)/sizeof(arr4[0]);
+
+	StackOrder<int> s(arr1,arr2,size1,size2);
+	cout<<s.CheckOrder()<<endl;
+	StackOrder<int> s1(arr1,arr4,size1,size4);
+	cout<<s1.CheckOrder()<<endl;
+
+	StackOrder<int> s3(arr1,arr3,size1,size3);
+	cout<<s3.CheckOrder()<<endl;
+
+	 char* arra = "abcdef";   //入栈序列
+    char* str2 = "bafdce";    //出栈序列
+    //char* str2 = "baefdc";  //出栈序列
+    StackOrder<char> s2(arra,str2, 6, 6);
+	cout << s2.CheckOrder() << endl;
+    return 0;
 }
